@@ -1,0 +1,11 @@
+// 백엔드 연동 전 더미 데이터
+
+export const produncts = [
+  {
+    id: 1,
+    title: "아이폰 12 미니",
+    price: 250000,
+    location: "부산",
+    image: "https://via.placeholder.com/150",
+  },
+];
