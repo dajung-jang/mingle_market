@@ -3,6 +3,7 @@ import { products } from "../data/products";
 import { useLikeStore } from "../store/useLikeStore";
 
 const Detail = () => {
+  const userId = "user1"; // 로그인 기능 전 더미 유저 정보
   const { id } = useParams();
   const navigate = useNavigate();
   const { likedItems, toggleLike } = useLikeStore();
@@ -62,7 +63,8 @@ const Detail = () => {
             {isLiked ? "❤️ 찜됨" : "🤍 찜하기"}
         </button>
         <button 
-          className="flex-1 bg-blue-500 text-white py-3 rounded-lg"
+          onClick={() => navigate(`/chat/${product.id}/${userId}`)}
+          className="flex-1 bg-blue-500 text-white py-3 rounded-lg font-semiblod"
         >
           채팅하기
         </button>
