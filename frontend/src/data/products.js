@@ -7,6 +7,7 @@ export const products = [
     price: 250000,
     location: "부산",
     image: "https://via.placeholder.com/150",
+    sellerId: "user1"
   },
   {
     id: 2,
@@ -14,5 +15,6 @@ export const products = [
     price: 800000,
     location: "부산",
     image: "https://via.placeholder.com/200",
+    sellerId: "user1"
   },
 ];

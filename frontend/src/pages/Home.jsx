@@ -17,6 +17,12 @@ const Home = () => {
         >
           찜 목록
         </button>
+        <button
+          onClick={() => navigate("/chat")}
+          className="bg-blue-500 text-white px-3 py-1 rounded"
+        >
+          채팅목록
+        </button>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">

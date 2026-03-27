@@ -15,7 +15,8 @@ export const useChatStore = create((set) => ({
             {
               id: Date.now(),
               text: message,
-              mine: true,
+              senderId: currentUser.id,
+              createAt: new Date(),
             },
           ],
         },

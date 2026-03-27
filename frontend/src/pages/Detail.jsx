@@ -1,13 +1,18 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { products } from "../data/products";
 import { useLikeStore } from "../store/useLikeStore";
+import { useUserStore } from "../store/useUserStore";
 
 const Detail = () => {
   const userId = "user1"; // 로그인 기능 전 더미 유저 정보
   const { id } = useParams();
   const navigate = useNavigate();
   const { likedItems, toggleLike } = useLikeStore();
-  
+  const { currnetUser } = useUserStore();
+
+  // 판매자인지 구매자인지 확인
+  const isSeller = currnetUser.id === product.sellerId;
+
   // 상품 찾기
   const product = products.find(
     (item) => item.id === Number(id)
@@ -62,12 +67,23 @@ const Detail = () => {
         >
             {isLiked ? "❤️ 찜됨" : "🤍 찜하기"}
         </button>
-        <button 
-          onClick={() => navigate(`/chat/${product.id}/${userId}`)}
-          className="flex-1 bg-blue-500 text-white py-3 rounded-lg font-semiblod"
-        >
-          채팅하기
-        </button>
+
+        {isSeller ? (
+          <button className="flex-1 bg-gray-300 py-3 rounded-lg">
+            내 상품입니다.
+          </button>
+        ) : (
+          <button
+            onClick={() => 
+              navigate(
+                `/chat/${product.id}/${currnetUser.id}/${product.sellerId}`
+              )
+            }
+            className="flex-1 bg-blue-500 text-white py-3 rounded-lg font-semiblod"
+          >
+            채팅하기
+          </button>
+        )}
       </div>
     </div>
   );

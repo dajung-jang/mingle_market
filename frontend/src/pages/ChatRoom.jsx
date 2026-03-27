@@ -1,21 +1,28 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import { useChatStore } from "../store/useChatStore";
+import { useUserStore} from "../store/useUserStore";
 
 const ChatRoom = () => {
-  const { productId, userId } = useParams();갸
+  const { productId, buyerId, sellerId } = useParams();
 
-  const roomId = `${productId}-${userId}`;
+  const roomId = `${productId}-${buyerId}-${sellerId}`;
   const [input, setInput] = useState("");
 
   const { chatRooms, sendMessage } = useChatStore();
 
   const messages = chatRooms[roomId] || [];
 
+  const { currentUser } = useUserStore();
+
+  // 판매자인지 구매자인지
+  const isMine = (msg) => 
+    msg.senderId === currentUser.id;
+
   const handleSend = () => {
     if (!input.trim()) return;
 
-    sendMessage(id, input);
+    sendMessage(roomId, input);
     setInput("");
   };
 
