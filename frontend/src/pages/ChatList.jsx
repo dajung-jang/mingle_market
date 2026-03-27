@@ -33,7 +33,16 @@ const ChatList = () => {
 
   return (
     <div className="p-5">
-      <h2 className="text-xl font-bold mb-4">채팅</h2>
+      <div className="flex flex-start">
+        <button
+        onClick={() => navigate(-1)}
+        className="mb-4 text-2xl text-bold text-black mr-5 mb-2"
+      >
+        ←
+      </button>
+        <h2 className="text-xl font-bold mb-4">채팅</h2>
+      </div>
+
 
       {/* 구매 판매 탭 */}
       <div className="flex mb-4">

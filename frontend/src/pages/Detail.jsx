@@ -4,20 +4,20 @@ import { useLikeStore } from "../store/useLikeStore";
 import { useUserStore } from "../store/useUserStore";
 
 const Detail = () => {
-  const userId = "user1"; // 로그인 기능 전 더미 유저 정보
-  const { id } = useParams();
+  // const userId = "user1"; // 로그인 기능 전 더미 유저 정보
+  // const { id } = useParams();
   const navigate = useNavigate();
   const { likedItems, toggleLike } = useLikeStore();
-  const { currnetUser } = useUserStore();
-
-  // 판매자인지 구매자인지 확인
-  const isSeller = currnetUser.id === product.sellerId;
+  const { currentUser } = useUserStore();
 
   // 상품 찾기
   const product = products.find(
     (item) => item.id === Number(id)
   );
   
+  // 판매자인지 구매자인지 확인
+  const isSeller = currentUser.id === product.sellerId;
+
   // 상품 없을때
     if (!product) return <div className="p-5">상품 없음</div>;
 
@@ -84,6 +84,7 @@ const Detail = () => {
             채팅하기
           </button>
         )}
+
       </div>
     </div>
   );
