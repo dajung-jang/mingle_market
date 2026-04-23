@@ -2,13 +2,17 @@ import { useParams, useNavigate } from "react-router-dom";
 import { products } from "../data/products";
 import { useLikeStore } from "../store/useLikeStore";
 import { useUserStore } from "../store/useUserStore";
+import { useProductStore } from "../store/useProductStore";
 
 const Detail = () => {
   // const userId = "user1"; // 로그인 기능 전 더미 유저 정보
   // const { id } = useParams();
   const navigate = useNavigate();
-  const { likedItems, toggleLike } = useLikeStore();
   const { currentUser } = useUserStore();
+  const { likedItems, toggleLike } = useLikeStore();
+
+  // 제품 삭제
+  const { deleteProduct } = useProductStore();
 
   // 상품 찾기
   const product = products.find(
@@ -82,6 +86,25 @@ const Detail = () => {
             className="flex-1 bg-blue-500 text-white py-3 rounded-lg font-semiblod"
           >
             채팅하기
+          </button>
+        )}
+        
+        {isSeller && (
+          <button onClick={() => {
+            deleteProduct(product.id);
+            navigate("/");
+          }}
+          className="w-full gb-red-500 text-white py-3 rounded-lg mt-3">
+            삭제하기
+          </button>
+        )}
+
+        {isSeller && (
+          <button
+            onClick={() => navigate(`edit/${product.id}`)}
+            className="w-full bg-gray-300 py-3 rounded-lg mt-2"
+          >
+            수정하기
           </button>
         )}
 

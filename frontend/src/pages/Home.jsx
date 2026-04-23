@@ -1,16 +1,24 @@
 import React from "react";
-import { products } from "../data/products";
+// import { products } from "../data/products";
 import ProductCard from "../components/ProductCard";
 import { useNavigate } from "react-router-dom";
+import { useProductStore } from "../store/useProductStore";
 
 const Home = () => {
 
+  const { products } = useProductStore();
   const navigate = useNavigate();
   return (
     <div className="p-5">
       <div className="flex justify-between mb-4">
         <h2 className="text-xl font-bold mb-4">중고 상품</h2>
 
+        <button
+          onClick={() => navigate("/add")}
+          className="bg-blue-500 text-white px-3 py-1 rounded"
+        >
+            상품 등록
+        </button>
         <button
           onClick={() => navigate("/mypage")}
           className="text-sm bg-black text-white px-3 py-1 rounded"
