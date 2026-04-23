@@ -13,8 +13,9 @@ const ProductCard = ({ product }) => {
   return (
       <div
         onClick={() => navigate(`/product/${product.id}`)} 
-        className="cursor-pointer rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition duration-300 bg-white"
+        className="relative cursor-pointer rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition duration-300 bg-white border"
       >
+    
         {/* 찜버튼 */}
         <button
           onClick={(e) => {
@@ -27,11 +28,14 @@ const ProductCard = ({ product }) => {
         </button>
         
         {/* 이미지 */}
-        <div className="w-full h-48 overflow-hidden">
+        <div className="w-full h-48 overflow-hidden bg-gray-100">
           <img 
             src={product.image} 
             alt={product.title} 
-            className="w-full h-full object-cover hover:scale-105 transition" 
+            className="w-full h-full object-cover hover:scale-105 transition"
+            onError={(e) => {
+              e.target.src = "https://placehold.co/300x200";
+            }}
           />
         </div>
         {/* 내용 */}

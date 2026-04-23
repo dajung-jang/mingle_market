@@ -10,7 +10,7 @@ const Detail = () => {
   const navigate = useNavigate();
   const { currentUser } = useUserStore();
   const { likedItems, toggleLike } = useLikeStore();
-  const { deleteProduct, updateProduct } = useProductStore();
+  const { deleteProduct } = useProductStore();
 
   const [product, setProduct] = useState(null);
 
@@ -36,85 +36,90 @@ const Detail = () => {
     await deleteProduct(product.id);
     navigate("/");
   };
-
+  
   return (
-    <div className="p-5">
+    <div>
       <button
         onClick={() => navigate(-1)}
-        className="mb-4 text-sm text-gray-500"
+        className="mb-6 text-sm text-gray-500 hover:text-blue-500"
       >
         ← 뒤로가기
       </button>
 
-      {/* 제품 이미지 */}
-      <img
-        src={product.image}
-        alt={product.title}
-        className="w-full h-72 object-cover rounded-xl"
-      />
+      {/* 2단 레이아웃 */}
+      <div className="flex flex-col md:flex-row gap-10">
 
-      {/* 제품 정보 */}
-      <div className="mt-4 text-left">
-        <h2 className="text-xl font-bold">{product.title}</h2>
-        <p className="text-2xl font-bold mt-2">
-          {product.price.toLocaleString()}원
-        </p>
-        <p className="text-gray-400 mt-1">
-          {product.location}
-        </p>
-
-        {/* 제품 설명 */}
-        <p className="mt-4">
-          상태 좋아요 깨끗하게 사용했습니다~~
-        </p>
-      </div>
-
-      {/* 버튼 */}
-      <div className="mt-6 flex flex-col gap-2">
-        <div className="flex gap-2">
-          <button 
-            onClick={() => toggleLike(product)}
-            className={`flex-1 py-3 rounded-lg ${isLiked ? "bg-red-500 text-white" : "bg-gray-200"}`}
-          >
-              {isLiked ? "❤️ 찜됨" : "🤍 찜하기"}
-          </button>
-
-          {isSeller ? (
-            <button className="flex-1 bg-gray-300 py-3 rounded-lg">
-              내 상품입니다.
-            </button>
-          ) : (
-            <button
-              onClick={() => 
-                navigate(
-                  `/chat/${product.id}/${currnetUser.id}/${product.sellerId}`
-                )
-              }
-              className="flex-1 bg-blue-500 text-white py-3 rounded-lg font-semiblod"
-            >
-              채팅하기
-            </button>
-          )} 
+        {/* 왼쪽 - 이미지 */}
+        <div className="w-full md:w-1/2">
+          <img
+            src={product.image}
+            alt={product.title}
+            className="w-full h-96 object-cover rounded-2xl bg-gray-100"
+            onError={(e) => { e.target.src = "https://placehold.co/600x400"; }}
+          />
         </div>
-        
-        {isSeller && (
-          <button 
-            onClick={handleDelete}
-            className="w-full gb-red-500 text-white py-3 rounded-lg mt-3"
-          >
-            삭제하기
-          </button>
-        )}
 
-        {isSeller && (
-          <button
-            onClick={() => navigate(`/edit/${product.id}`)}
-            className="w-full bg-gray-300 py-3 rounded-lg"
-          >
-            수정하기
-          </button>
-        )}
+        {/* 오른쪽 - 정보 */}
+        <div className="w-full md:w-1/2 flex flex-col justify-between">
+          <div>
+            <h2 className="text-2xl font-bold mb-3">{product.title}</h2>
+            <p className="text-3xl font-bold text-blue-600 mb-3">
+              {product.price.toLocaleString()}원
+            </p>
+            <p className="text-gray-400 mb-6">📍 {product.location}</p>
+            <p className="text-gray-600 leading-relaxed">
+              상태 좋아요 깨끗하게 사용했습니다~~
+            </p>
+          </div>
 
+          {/* 버튼 영역 */}
+          <div className="mt-8 flex flex-col gap-3">
+            <div className="flex gap-3">
+              <button
+                onClick={() => toggleLike(product)}
+                className={`flex-1 py-3 rounded-xl font-semibold ${
+                  isLiked
+                    ? "bg-red-500 text-white"
+                    : "bg-gray-100 hover:bg-gray-200"
+                }`}
+              >
+                {isLiked ? "❤️ 찜됨" : "🤍 찜하기"}
+              </button>
+
+              {isSeller ? (
+                <button className="flex-1 bg-gray-100 py-3 rounded-xl text-gray-400 font-semibold">
+                  내 상품입니다
+                </button>
+              ) : (
+                <button
+                  onClick={() =>
+                    navigate(`/chat/${product.id}/${currentUser.id}/${product.sellerId}`)
+                  }
+                  className="flex-1 bg-blue-500 text-white py-3 rounded-xl font-semibold hover:bg-blue-600"
+                >
+                  채팅하기
+                </button>
+              )}
+            </div>
+
+            {isSeller && (
+              <div className="flex gap-3">
+                <button
+                  onClick={() => navigate(`/edit/${product.id}`)}
+                  className="flex-1 bg-gray-100 py-3 rounded-xl font-semibold hover:bg-gray-200"
+                >
+                  수정하기
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="flex-1 bg-red-500 text-white py-3 rounded-xl font-semibold hover:bg-red-600"
+                >
+                  삭제하기
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
