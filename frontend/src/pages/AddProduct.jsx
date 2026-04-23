@@ -10,15 +10,17 @@ const AddProduct = () => {
 
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
+  const [location, setLocation] = useState("");
+  const [image, setImage] = useState("");
 
-  const handleSubmit = () => {
-    if (!title || !price) return;
+  const handleSubmit = async () => {
+    if (!title || !price || !location) return;
 
-    addProduct({
+    await addProduct({
       title,
       price: Number(price),
-      location: "부산",
-      image: "https://via.placeholder.com/150",
+      location,
+      image: image || "https://placehold.co/150x150",
       sellerId: currentUser.id,
     });
 
@@ -44,6 +46,20 @@ const AddProduct = () => {
         placeholder="금액"
         type="number"
         className="w-full border p-2 mb-3"
+      />
+
+      <input
+        value={location}
+        onChange={(e) => setLocation(e.target.value)}
+        placeholder="거래 지역"
+        className="w-full border p-2 mb-3 rounded"
+      />
+
+      <input
+        value={image}
+        onChange={(e) => setImage(e.target.value)}
+        placeholder="이미지 URL (선택사항)"
+        className="w-full border p-2 mb-3 rounded"
       />
 
       <button

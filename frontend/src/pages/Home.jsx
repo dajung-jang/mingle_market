@@ -3,11 +3,17 @@ import React from "react";
 import ProductCard from "../components/ProductCard";
 import { useNavigate } from "react-router-dom";
 import { useProductStore } from "../store/useProductStore";
+import { useEffect } from "react";
 
 const Home = () => {
 
-  const { products } = useProductStore();
+  const { products, fetchProducts } = useProductStore();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
   return (
     <div className="p-5">
       <div className="flex justify-between mb-4">
