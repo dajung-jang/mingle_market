@@ -9,11 +9,12 @@
     VALUES (#{productId}, #{buyerId}, #{sellerId})
   </insert>
 
-  <select id="fintChatRoom" resultType="ChatRoomDto">
+  <select id="findChatRoom" resultType="ChatRoomDto">
     SELECT * FROM chat_rooms
-    WHRER product_id = #{productId}
+    WHERE product_id = #{productId}
     AND buyer_id = #{buyerId}
     AND seller_id = #{sellerId}
+    LIMIT 1
   </select>
 
   <insert id="insertMessage">
@@ -23,7 +24,7 @@
 
   <select id="getMessages" resultType="ChatDto">
     SELECT * FROM messages
-    WHRER room_id = #{roomId}
+    WHERE room_id = #{roomId}
     ORDER BY created_at ASC
   </select>
 

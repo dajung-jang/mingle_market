@@ -37,12 +37,19 @@ export const useChatStore = create((set, get) => ({
     const client = new Client({
       webSocketFactory: () => new SockJS("http://localhost:8080/ws"),
       onConnect: () => {
+        console.log("websocket 연결 성공")
         client.subscribe(`/topic/chat/${roomId}`, (msg) => {
           const newMessage = JSON.parse(msg.body);
           set((state) => ({
-            message: [...state.messages, newMessage],
+            messages: [...state.messages, newMessage],
           }));
         });
+      },
+      onDisconnect: () => {
+        console.log("websocket 연결 끊김");
+      },
+      onStompError: (frame) => {
+        console.log("stomp 에러:", frame);
       },
     });
     client.activate();
@@ -60,9 +67,17 @@ export const useChatStore = create((set, get) => ({
   sendMessage: (roomId, text, senderId) => {
     const { stompClient } = get();
     if (!stompClient) return;
+
+    const message = { roomId, text, senderId };
+
     stompClient.publish({
       destination: `/app/chat/${roomId}`,
       body: JSON.stringify({ roomId, text, senderId }),
     });
+
+    // 채팅 보낸거 바로 화면에 뜨게
+    set((state) => ({
+      messages: [...state.messages, { ...message, id: Date.now() }],
+    }));
   },
 }));

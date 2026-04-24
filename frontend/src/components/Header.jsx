@@ -3,10 +3,10 @@ import { useUserStore } from "../store/useUserStore";
 
 const Header = () => {
   const navigate = useNavigate();
-  const { currentUser, singOut } = useUserStore();
+  const { currentUser, signOut } = useUserStore();
 
   const handleSignOut = async () => {
-    await singOut();
+    await signOut();
     navigate("/login");
   };
    return (
