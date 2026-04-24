@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mingle_market.mapper.LikeMapper">
+
+  <insert id="insertLike">
+    INSERT INTO likes (user_id, product_id)
+    VALUES (#{userId}, #{productId})
+  </insert>
+
+  <delete id="deleteLike">
+    DELETE FROM likes
+    WHERE user_id = #{userId} AND product_id = #{productId}
+  </delete>
+
+<!-- 찜 여부 확인 -->
+  <select id="findLike" resultType="LikeDto">
+    SELECT * from likes
+    WHERE user_id = #{userId} AND product_id = #{productId}
+  </select>
+  
+  <!-- 유저 찜 목록 (상품 정보 포함) -->
+  <select id="getLikeProducts" resultType="productDto">
+    SELECT p.* from products p
+    JOIN likes l ON p.id = l.product_id
+    WHERE l.user_id = #{userId}
+    ORDER BY l.created_at DESC
+  </select>
+</mapper>

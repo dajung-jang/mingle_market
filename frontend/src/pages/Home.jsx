@@ -1,18 +1,19 @@
-import React from "react";
-// import { products } from "../data/products";
 import ProductCard from "../components/ProductCard";
-import { useNavigate } from "react-router-dom";
 import { useProductStore } from "../store/useProductStore";
+import { useLikeStore } from "../store/useLikeStore";
+import { useUserStore } from "../store/useUserStore";
 import { useEffect } from "react";
 
 const Home = () => {
 
   const { products, fetchProducts } = useProductStore();
-  const navigate = useNavigate();
+  const { fetchLikes } = useLikeStore();
+  const { currentUser } = useUserStore();
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+    if (currentUser) fetchLikes(currentUser.id);
+  }, [currentUser]);
 
   return (
     <div>

@@ -1,24 +1,26 @@
 import { create } from "zustand";
+import axios from "axios";
 
-export const useLikeStore = create((set) => ({
+const BASE_URL = "http://localhost:8080/api";
+
+export const useLikeStore = create((set, get) => ({
   likedItems: [],
 
-  toggleLike: (product) =>
-    set((state) => {
-      const exists = state.likedItems.find(
-        (item) => item.id === product.id
-      );
+  // 찜 목록 불러오기
+  fetchLikes: async (userId) => {
+    const res = await axios.get(`${BASE_URL}/likes/${userId}`);
+    set({ likedItems: res.data });
+  },
 
-      if (exists) {
-        return {
-          likedItems: state.likedItems.filter(
-            (item) => item.id !== product.id
-          ),
-        };
-      } else {
-        return {
-          likedItems: [...state.likedItems, product],
-        };
-      }
-    }),
+  // 찜 토글
+  toggleLike: async (product, userId) => {
+    await axios.post(`${BASE_URL}/likes/toggle`, {
+      userId,
+      productId: product.id,
+    });
+
+    // 토글 후 찜 목록 다시 불러오기
+      const res = await axios.get(`${BASE_URL}/likes/${userId}`);
+      set({ likedItems: res.data });
+  },
 }));

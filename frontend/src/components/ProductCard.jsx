@@ -1,9 +1,11 @@
 import { useLikeStore } from "../store/useLikeStore";
+import { useUserStore } from "../store/useUserStore"; 
 import { useNavigate } from "react-router-dom";
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
   const { likedItems, toggleLike } = useLikeStore();
+  const { currentUser } = useUserStore();
 
   // 현재 상품 찜 상태 확인
   const isLiked = likedItems.some(
@@ -19,8 +21,8 @@ const ProductCard = ({ product }) => {
         {/* 찜버튼 */}
         <button
           onClick={(e) => {
-            e.stopPropagation();    // 카드 클릭 이벤트 방지
-            toggleLike(product);
+            e.stopPropagation();
+            if (currentUser) toggleLike(product, currentUser.id);
           }}  
           className="absolute top-2 right-2 text-xl z-10"
         >
@@ -51,7 +53,6 @@ const ProductCard = ({ product }) => {
           </p>
         </div>
       </div>
-
   );
 };
 
