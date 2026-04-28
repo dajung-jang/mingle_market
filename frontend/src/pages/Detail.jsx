@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import { useLikeStore } from "../store/useLikeStore";
 import { useUserStore } from "../store/useUserStore";
 import { useProductStore } from "../store/useProductStore";
+import axios from "axios";
+
+const BASE_URL = "http://localhost:8080/api";
 
 const Detail = () => {
   // const userId = "user1"; // 로그인 기능 전 더미 유저 정보
@@ -13,12 +16,18 @@ const Detail = () => {
   const { deleteProduct } = useProductStore();
 
   const [product, setProduct] = useState(null);
+  const [images, setImages] = useState([]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     // 상품 아이디로 조회
-    fetch(`http://localhost:8080/api/products/${id}`)
+    fetch(`${BASE_URL}/products/${id}`)
       .then((res) => res.json())
       .then((data) => setProduct(data));
+
+    // 이미지 목록
+    axios.get(`${BASE_URL}/products/${id}/images`) 
+      .then((res) => setImages(res.data));
   }, [id]);
 
     // 상품 없을때
@@ -36,6 +45,11 @@ const Detail = () => {
     await deleteProduct(product.id);
     navigate("/");
   };
+
+  // 대표 이미지 결정
+  const displayImages = images.length > 0
+    ? images.map((img) => img.imageUrl)
+    : [product.image];
   
   return (
     <div>
@@ -49,26 +63,83 @@ const Detail = () => {
       {/* 2단 레이아웃 */}
       <div className="flex flex-col md:flex-row gap-10">
 
-        {/* 왼쪽 - 이미지 */}
+        {/* 왼쪽 - 이미지 슬라이더 */}
         <div className="w-full md:w-1/2">
-          <img
-            src={product.image}
-            alt={product.title}
-            className="w-full h-96 object-cover rounded-2xl bg-gray-100"
-            onError={(e) => { e.target.src = "https://placehold.co/600x400"; }}
-          />
+        {/* 메인 이미지 */}
+          <div className="relative w-full h-96 rounded-2xl overflow-hidden bg-gray-100 mb-3">
+            <img
+              src={displayImages[currentImageIndex]}
+              alt={product.title}
+              className="w-full h-full object-cover"
+              onError={(e) => { e.target.src = "https://placehold.co/600x400"; }}
+            />
+
+            {/* 이전, 다음 */}
+            {displayImages.length > 1 && (
+              <>
+                <button
+                  onClick={() => setCurrentImageIndex((prev) =>
+                    prev === 0 ? displayImages.length -1 : prev - 1
+                  )}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-white bg-opacity-70 rounded-full w-8 h-8 flex items-center justify-center hover:bg-opacity-100"
+                >
+                  ←
+                </button>
+                <button
+                  onClick={() => setCurrentImageIndex((prev) =>
+                    prev === displayImages.length -1 ? 0 : prev + 1
+                  )}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-white bg-opacity-70 rounded-full w-8 h-8 flex items-center justify-center hover:bg-opacity-100"
+                >
+                  →
+                </button>
+
+                {/* 인디케이터 */}
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1">
+                  {displayImages.map((_, index) => (
+                    <div
+                      key={index}
+                      onClick={() => setCurrentImageIndex(index)}
+                      className={`w-2 h-2 rounded-full cursor-pointer ${
+                        index === currentImageIndex ? "bg-white" : "bg-white bg-opacity-50"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+          
+          {/* 썸네일 목록 */}
+          {displayImages.length > 1 && (
+            <div className="flex gap-2 overflow-w-auto">
+              {displayImages.map((src, index) => (
+                <img
+                  key={index}
+                  src={src}
+                  onClick={() => setCurrentImageIndex(index)}
+                  className={`w-16 h-16 object-cover rounded-lg cursor-pointer flex-shrink-0 ${
+                    index === currentImageIndex
+                      ? "ring-2 ring-blue-500"
+                      : "opacity-60 hover:opacity-100"
+                  }`}
+                  onError={(e) => { e.target.src = "https://placehold.co/60x60"; }}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* 오른쪽 - 정보 */}
+          {/* 오른쪽 정보 */}
         <div className="w-full md:w-1/2 flex flex-col justify-between">
           <div>
             <h2 className="text-2xl font-bold mb-3">{product.title}</h2>
             <p className="text-3xl font-bold text-blue-600 mb-3">
               {product.price.toLocaleString()}원
             </p>
-            <p className="text-gray-400 mb-6">📍 {product.location}</p>
+            <p className="text-gray-400 mb-4">📍 {product.location}</p>
             <p className="text-gray-600 leading-relaxed">
-              상태 좋아요 깨끗하게 사용했습니다~~
+              {product.description || "상품 설명이 없습니다."}
             </p>
           </div>
 
@@ -121,49 +192,6 @@ const Detail = () => {
                   </button>
                 </div>
               )}
-            {/* <div className="flex gap-3">
-              <button
-                onClick={() => toggleLike(product)}
-                className={`flex-1 py-3 rounded-xl font-semibold ${
-                  isLiked
-                    ? "bg-red-500 text-white"
-                    : "bg-gray-100 hover:bg-gray-200"
-                }`}
-              >
-                {isLiked ? "❤️ 찜됨" : "🤍 찜하기"}
-              </button>
-              {isSeller ? (
-                <button className="flex-1 bg-gray-100 py-3 rounded-xl text-gray-400 font-semibold">
-                  내 상품입니다
-                </button>
-              ) : (
-                <button
-                  onClick={() =>
-                    navigate(`/chat/${product.id}/${currentUser.id}/${product.sellerId}`)
-                  }
-                  className="flex-1 bg-blue-500 text-white py-3 rounded-xl font-semibold hover:bg-blue-600"
-                >
-                  채팅하기
-                </button>
-              )}
-            </div>
-
-            {isSeller && (
-              <div className="flex gap-3">
-                <button
-                  onClick={() => navigate(`/edit/${product.id}`)}
-                  className="flex-1 bg-gray-100 py-3 rounded-xl font-semibold hover:bg-gray-200"
-                >
-                  수정하기
-                </button>
-                <button
-                  onClick={handleDelete}
-                  className="flex-1 bg-red-500 text-white py-3 rounded-xl font-semibold hover:bg-red-600"
-                >
-                  삭제하기
-                </button>
-              </div>
-            )} */}
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 package com.example.mingle_market.controller;
 
 import com.example.mingle_market.dto.ProductDto;
+import com.example.mingle_market.dto.ProductImageDto;
 import com.example.mingle_market.service.ProductService;
 import com.example.mingle_market.service.ProductImageService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,12 @@ public class ProductController {
   @GetMapping("/{id}")
   public ProductDto getProductById(@PathVariable Long id) {
     return productService.getProductById(id);
+  }
+
+  // 이미지 목록
+  @GetMapping("/{id}/images")
+  public List<ProductImageDto> getProductImages(@PathVariable Long id) {
+    return productImageService.getImages(id);
   }
 
   // 상품 등록
