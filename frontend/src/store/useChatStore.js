@@ -13,7 +13,7 @@ export const useChatStore = create((set, get) => ({
   // 채팅방 목록 불러오기
   fetchChatRooms: async (userId) => {
     const res = await axios.get(`${BASE_URL}/chat/rooms/${userId}`);
-    sessionStorage({ chatRooms: res.data });
+    set({ chatRooms: res.data });
   },
 
   // 채팅방 생성, 조회

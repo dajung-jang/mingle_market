@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mingle_market.mapper.UserMapper">
+
+  <insert id="insertUser">
+    INSERT INTO users (id, nickname)
+    VALUES (#{id}, #{nickname})
+  </insert>
+
+  <select id="getUserById" resultType="UserDto">
+    SELECT * FROM users WHERE id = #{id}
+  </select>
+
+  <select id="getUserByNickname" resultType="USerDto">
+    SELECT * FROM users WHERE nickname = #{nickname}
+  </select>
+</mapper>

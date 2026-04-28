@@ -74,7 +74,54 @@ const Detail = () => {
 
           {/* 버튼 영역 */}
           <div className="mt-8 flex flex-col gap-3">
-            <div className="flex gap-3">
+              {isSeller ? (
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => navigate(`/edit/${product.id}`)}
+                    className="flex-1 bg-gray-100 py-3 rounded-xl font-semibold hover:bg-gray-200"
+                  >
+                    수정하기
+                  </button>
+                  <button
+                    onClick={handleDelete}
+                    className="flex-1 bg-red-500 text-white py-3 rounded-xl font-semibold hover:bg-red-600"
+                  >
+                    삭제하기
+                  </button>
+                </div>
+              ) : (
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {
+                      if (!currentUser) {
+                        alert("로그인이 필요합니다.");
+                        return;
+                      }
+                      toggleLike(product);
+                    }}
+                    className={`flex-1 py-3 rounded-xl font-semibold ${
+                      isLiked
+                        ? "bg-red-500 text-white"
+                        : "bg-gray-100 hover:bg-gray-200"
+                    }`}
+                  >
+                    {isLiked ? "❤️ 찜됨" : "🤍 찜하기"}
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (!currentUser) {
+                        alert("로그인이 필요합니다.");
+                        return;
+                      }
+                      navigate(`/chat/${product.id}/${currentUser.id}/${product.sellerId}`);
+                    }}
+                    className="flex-1 bg-blue-500 text-white py-3 rounded-xl font-semibold hover:bg-blue-600"
+                  >
+                    채팅하기
+                  </button>
+                </div>
+              )}
+            {/* <div className="flex gap-3">
               <button
                 onClick={() => toggleLike(product)}
                 className={`flex-1 py-3 rounded-xl font-semibold ${
@@ -85,7 +132,6 @@ const Detail = () => {
               >
                 {isLiked ? "❤️ 찜됨" : "🤍 찜하기"}
               </button>
-
               {isSeller ? (
                 <button className="flex-1 bg-gray-100 py-3 rounded-xl text-gray-400 font-semibold">
                   내 상품입니다
@@ -117,7 +163,7 @@ const Detail = () => {
                   삭제하기
                 </button>
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </div>

@@ -22,7 +22,11 @@ const ProductCard = ({ product }) => {
         <button
           onClick={(e) => {
             e.stopPropagation();
-            if (currentUser) toggleLike(product, currentUser.id);
+            if (!currentUser) {
+              alert("로그인이 필요합니다.");
+              return;
+            }
+            toggleLike(product, currentUser.id);
           }}  
           className="absolute top-2 right-2 text-xl z-10"
         >

@@ -12,14 +12,14 @@
         SELECT * FROM products WHERE id = #{id}
     </select>
 
-    <insert id="insertProduct">
-        INSERT INTO products (title, price, location, image, seller_id)
-        VALUES (#{title}, #{price}, #{location}, #{image}, #{sellerId})
+    <insert id="insertProduct" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO products (title, price, location, image, seller_id, description)
+        VALUES (#{title}, #{price}, #{location}, #{image}, #{sellerId}, #{description})
     </insert>
 
     <update id="updateProduct">
         UPDATE products
-        SET title = #{title}, price = #{price}, location = #{location}, image = #{image}
+        SET title = #{title}, price = #{price}, location = #{location}, image = #{image}, description = #{description}
         WHERE id = #{id}
     </update>
 

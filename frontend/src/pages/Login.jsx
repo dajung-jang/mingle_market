@@ -8,14 +8,16 @@ const Login = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [nickname, setNickname] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
   const [error, setError] = useState("");
 
   const handleSubmit = async () => {
     try {
       if (isSignUp) {
-        await signUp(email, password);
-        alert("회원가입 완료? 이메일 인증 후 로그인 해주세요.");
+        if (!nickname) return setError("닉네임을 입력해주세요.");
+        await signUp(email, password, nickname);
+        alert("회원가입 완료! 이메일 인증 후 로그인해주세요.");
       } else {
         await signIn(email, password);
         navigate("/");
@@ -47,6 +49,15 @@ const Login = () => {
         className="w-full border p-2 mb-3 rounded"
       />
 
+      {isSignUp && (
+        <input
+          value={nickname}
+          onChange={(e) => setNickname(e.target.value)}
+          placeholder="닉네임"
+          className="w-full border p-2 mb-3 rounded"
+        />
+      )}
+      
       {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
 
       <button

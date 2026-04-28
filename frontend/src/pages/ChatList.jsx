@@ -2,6 +2,9 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useChatStore } from "../store/useChatStore";
 import { useUserStore } from "../store/useUserStore";
+import axios from "axios";
+
+const BASE_URL = "http://localhost:8080/api";
 
 const ChatList = () => {
   const navigate = useNavigate();
@@ -11,7 +14,8 @@ const ChatList = () => {
 
   // 판매, 구매 채팅탭 구분 (buy/sell)
   const [tab, setTab] = useState("buy");
-
+  const [productMap, setProductMap] = useState({});
+  const [userMap, setUserMap] = useState({});
   // 채팅방 리스트 테스트 더미
   // const chats = [
   //   {id: 1, user: "홍길동", lastMessage: "구매 가능할까요?" },
@@ -21,6 +25,25 @@ const ChatList = () => {
   useEffect(() => {
     if (currentUser) fetchChatRooms(currentUser.id);
   }, [currentUser]);
+
+  // 상품 정보, 유저 닉네임 불러오기
+  useEffect(() => {
+    if(chatRooms.length === 0) return;
+
+    chatRooms.forEach(async (room) => {
+      // 상품 정보
+      if (!productMap[room.productId]) {
+        const res = await axios.get(`${BASE_URL}/products/${room.productId}`);
+        setProductMap((prev) => ({ ...prev, [room.productId]: res.data }));
+      }
+      // 유저 닉네임
+      const otherUserId = tab === "buy" ? room.sellerId : room.buyerId;
+      if (!userMap[otherUserId]) {
+        const res = await axios.get(`${BASE_URL}/users/${otherUserId}`);
+        setUserMap((prev) => ({ ...prev, [otherUserId]: res.data }));
+      }
+    });
+  }, [chatRooms, tab]);
 
   // 채팅방 리스트 (필터링)
   const filteredRooms = chatRooms.filter((room) =>
@@ -75,20 +98,36 @@ const ChatList = () => {
           채팅 내역이 없습니다.
         </p>
       ) : (
-        filteredRooms.map((room) => (
-          <div
-            key={room.id}
-            onClick={() =>
-              navigate(`/chat/${room.productId}/${room.buyerId}/${room.sellerId}`)
-            }
-            className="p-4 border-b cursor-pointer hover:bg-gray-50"
-          >
-            <p className="font-semibold">상품 #{room.productId}</p>
-            <p className="text-sm text-gray-400">
-              {tab === "buy" ? `판매자: ${room.sellerId}` : `구매자: ${room.buyerId}`}
-            </p>
-          </div>
-        ))
+        filteredRooms.map((room) => {
+          const product = productMap[room.productId];
+          const otherUserId = tab === "buy" ? room.sellerId : room.buyerId;
+          const otherUser = userMap[otherUserId];
+          return (
+            <div
+              key={room.id}
+              onClick={() =>
+                navigate(`/chat/${room.productId}/${room.buyerId}/${room.sellerId}`)
+              }
+              className="flex itesm-center gap-4 p-4 border-b cursor-pointer hover:bg-gray-50"
+            >
+              {/* 상품 이미지 */}
+              <img
+                src={product?.image || "https://placehold.co/60x60"}
+                alt={product?.title}
+                className="w-14 h-14 rounded-lg object-cover bg-gray-100"
+                onError={(e) => { e.target.src = "https://placehold.co/60x60"}}
+              />
+              
+              {/* 채팅 정보 */}
+              <div className="flex-1">
+                <p className="font-semibold">{product?.title || "상품 로딩중..."}</p>
+                <p className="text-sm text-gray-400">
+                  {tab === "buy" ? "판매자" : "구매자"}: {otherUser?.nickname || "로딩중..."}
+                </p>
+              </div>
+            </div>
+          );
+        })
       )}
     </div>
 //     <div className="p-5">

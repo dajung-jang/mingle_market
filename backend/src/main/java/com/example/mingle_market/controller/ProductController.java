@@ -2,6 +2,7 @@ package com.example.mingle_market.controller;
 
 import com.example.mingle_market.dto.ProductDto;
 import com.example.mingle_market.service.ProductService;
+import com.example.mingle_market.service.ProductImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 public class ProductController {
 
   private final ProductService productService;
+  private final ProductImageService productImageService;
 
   // 전체 상품 조회
   @GetMapping
@@ -30,6 +32,11 @@ public class ProductController {
   @PostMapping
   public void addProduct(@RequestBody ProductDto product) {
     productService.addProduct(product);
+
+    // 이미지 여러개 저장
+    if (product.getImageUrls() != null && !product.getImageUrls().isEmpty()) {
+      productImageService.saveImages(product.getId(), product.getImageUrls());
+    }
   }
 
   // 상품 수정
