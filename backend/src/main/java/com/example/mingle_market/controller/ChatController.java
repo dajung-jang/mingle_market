@@ -40,8 +40,9 @@ public class ChatController {
   // 메시지 전송
   @MessageMapping("/chat/{roomId}")
   public void sendMessage(@DestinationVariable Long roomId, ChatDto message) {
+    System.out.println("메세지 수신 : " + message.getText());
     message.setRoomId(roomId);
     chatService.saveMessage(message);
-    messagingTemplate.convertAndSend("/topic/chat" + roomId, message);
+    messagingTemplate.convertAndSend("/topic/chat/" + roomId, message);
   }
 }

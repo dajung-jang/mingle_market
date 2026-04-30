@@ -76,8 +76,8 @@ export const useChatStore = create((set, get) => ({
     });
 
     // 채팅 보낸거 바로 화면에 뜨게
-    set((state) => ({
-      messages: [...state.messages, { ...message, id: Date.now() }],
-    }));
+    // set((state) => ({
+    //   messages: [...state.messages, { ...message, id: Date.now() }],
+    // }));
   },
 }));

@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useChatStore } from "../store/useChatStore";
 import { useUserStore } from "../store/useUserStore";
 
@@ -19,6 +19,7 @@ const ChatRoom = () => {
   // const roomId = `${productId}-${buyerId}-${sellerId}`;
   const [input, setInput] = useState("");
   const [roomId, setRoomId] =useState(null);
+  const messagesEndRef = useRef(null); //맨 아래 ref 추가
 
   // // 판매자인지 구매자인지
   // const isMine = (msg) => 
@@ -39,6 +40,11 @@ const ChatRoom = () => {
 
     return () => disconnect(); 
   }, []);
+
+  // 메세지 추가될 때마다 맨 아래로 스크롤
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth"});
+  }, [messages]);
 
   const handleSend = () => {
     if (!input.trim() || !roomId) return;
@@ -88,6 +94,8 @@ const ChatRoom = () => {
             </div>
           </div>
         ))}
+        {/* 맨 아래 anchor */}
+        <div ref={messagesEndRef} />
       </div>
 
       {/* 입력창 */}

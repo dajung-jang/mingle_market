@@ -51,6 +51,12 @@ public class ProductController {
   public void updateProduct(@PathVariable Long id, @RequestBody ProductDto product) {
     product.setId(id);
     productService.updateProduct(product);
+
+    // 이미지 업데이트
+    if (product.getImageUrls() != null) {
+      productImageService.deleteImages(id);
+      productImageService.saveImages(id, product.getImageUrls());
+    }
   }
   
   // 상품 삭제
