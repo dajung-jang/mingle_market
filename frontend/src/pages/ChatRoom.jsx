@@ -103,7 +103,11 @@ const ChatRoom = () => {
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSend()}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.nativeEvent.isComposing) {
+              handleSend();
+            }
+          }}
           className="flex-1 border rounded-xl px-4 py-2 outline-none focus:border-blue-400"
           placeholder="메시지 입력..."
         />

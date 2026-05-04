@@ -25,6 +25,7 @@ public class ChatService {
 
   // 메세지 저장
   public void saveMessage(ChatDto message) {
+    System.out.println("저장 호출: " +message.getText());
     chatMapper.insertMessage(message);
   }
 

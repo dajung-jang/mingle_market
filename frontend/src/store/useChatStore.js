@@ -34,8 +34,15 @@ export const useChatStore = create((set, get) => ({
 
   // websocket 연결
   connect: (roomId) => {
+    console.log("connect호출된");
+    const { stompClient } = get();
+    if (stompClient?.active) {
+      console.log("이미 연결 되어있음 - return");
+      return;
+    }
+
     const client = new Client({
-      webSocketFactory: () => new SockJS("http://localhost:8080/ws"),
+      webSocketFactory: () => new SockJS("http://localhost:8080/ws"), 
       onConnect: () => {
         console.log("websocket 연결 성공")
         client.subscribe(`/topic/chat/${roomId}`, (msg) => {
