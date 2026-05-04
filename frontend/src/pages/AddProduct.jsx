@@ -16,10 +16,10 @@ const AddProduct = () => {
   const [imageFiles, setImageFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
 
-  // 지역 선택
-  const [selectedCity, setSelectedCity] = useState("");
-  const [selectedDistrict, setSelectedDistrict] = useState("");
-  const [selectedDong, setSelectedDong] = useState("");
+  // 지역 선택(유저 지역 기본값으로 설정)
+  const [selectedCity, setSelectedCity] = useState(currentUser?.city || "");
+  const [selectedDistrict, setSelectedDistrict] = useState(currentUser?.district || "");
+  const [selectedDong, setSelectedDong] = useState(currentUSer?.dong || "");
 
   const [uploading, setUploading] = useState(false);
 

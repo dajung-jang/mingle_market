@@ -5,8 +5,8 @@
 <mapper namespace="com.example.mingle_market.mapper.UserMapper">
 
   <insert id="insertUser">
-    INSERT INTO users (id, nickname)
-    VALUES (#{id}, #{nickname})
+    INSERT INTO users (id, nickname, profile_image, user_city, user_district, user_dong)
+    VALUES (#{id}, #{nickname}, #{profileImage} , #{userCity}, #{userDistrict}, #{userDong})
   </insert>
 
   <select id="getUserById" resultType="UserDto">
@@ -16,4 +16,14 @@
   <select id="getUserByNickname" resultType="USerDto">
     SELECT * FROM users WHERE nickname = #{nickname}
   </select>
+
+  <update id="updateUser">
+    UPDATE users
+    SET nickname = #{nickname},
+        profile_image = #{profileImage},
+        user_city = #{userCity},
+        user_district = #{userDistrict},
+        user_dong = #{userDong}
+    WHERE id = #{id}
+  </update>
 </mapper>

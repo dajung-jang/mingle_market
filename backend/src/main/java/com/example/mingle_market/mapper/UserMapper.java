@@ -9,4 +9,5 @@ public interface UserMapper {
   void insertUser(UserDto user);
   UserDto getUserById(String id);
   UserDto getUserByNickname(String nickname);
+  void updateUser(UserDto user);
 }

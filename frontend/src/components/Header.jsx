@@ -22,15 +22,21 @@ const Header = () => {
         <nav className="flex items-center gap-4">
           {currentUser ? (
             <>
-              <span className="text-sm text-gray-600">
-                {currentUser.email}
-              </span>
-              <button
+              <div
                 onClick={() => navigate("/mypage")}
-                className="text-sm text-gray-600 hover:text-blue-500"
+                className="flex items-center gap-2 cursor-pointer hover:opacity-80"
               >
-                마이페이지
-              </button>
+                <img
+                  src={currentUser.profileImage || "https://placehold.co/32x32"}
+                  alt="프로필"
+                  className="w-8 h-8 rounded-full object-cover bg-gray-100"
+                  onError={(e) => { e.target.src = "https://placehold.co/32x32"; }}
+                />
+                <span className="text-sm font-semibold">
+                  {currentUser.nickname}
+                </span>
+              </div>
+              
               <button
                 onClick={() => navigate("/chat")}
                 className="text-sm text-gray-600 hover:text-blue-500"

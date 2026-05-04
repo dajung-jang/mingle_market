@@ -20,4 +20,8 @@ public class UserService {
   public UserDto getUserById(String id) {
     return userMapper.getUserById(id);
   }
+
+  public void updateUser(UserDto user) {
+    userMapper.updateUser(user);
+  }
 }
