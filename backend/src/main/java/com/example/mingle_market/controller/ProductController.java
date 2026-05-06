@@ -7,6 +7,7 @@ import com.example.mingle_market.service.ProductImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/products")
@@ -19,8 +20,11 @@ public class ProductController {
 
   // 전체 상품 조회
   @GetMapping
-  public List<ProductDto> getAllProducts() {
-    return productService.getAllProducts();
+  public Map<String, Object> getAllProducts(
+    @RequestParam(defaultValue = "1") int page,
+    @RequestParam(defaultValue = "8") int size
+  ) {
+    return productService.getAllProducts(page, size);
   }
 
   // 상품 아이디로 조회

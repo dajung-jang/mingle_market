@@ -12,6 +12,8 @@ const EditProduct = () => {
   const navigate = useNavigate();
   const { updateProduct } = useProductStore();
 
+  const [status, setStatus] = useState("판매중");
+
   const [product, setProduct] = useState(null);
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
@@ -40,6 +42,7 @@ const EditProduct = () => {
         setTitle(data.title);
         setPrice(data.price);
         setDescription(data.description || "");
+        setStatus(data.status || "판매중");
 
         // 지역 정보 불러오기
         const parts = data.location?.split(" ");
@@ -119,6 +122,7 @@ const EditProduct = () => {
         description,
         imgae: allImageUrls[0] || "https://placehold.co/300x200",
         imgaeUrls: allImageUrls,
+        status,
       });
 
       navigate(`/product/${id}`);
@@ -223,6 +227,28 @@ const EditProduct = () => {
         className="w-full border p-2 mb-3 rounded resize-none"
       />
 
+{/* 판매상태 */}
+      <div className="flex gap-2 mb-3">
+        {["판매중", "예약중", "판매완료"].map((s) => (
+          <button
+            key={s}
+            onClick={() => setStatus(s)}
+            className={`flex-1 py-2 rounded-xl text-sm font-semibold ${
+              status === s
+                ? s === "판매중"
+                  ? "bg-blue-500 text-white"
+                  : s === "예약중"
+                  ? "bg-yellow-400 text-white"
+                  :"bg-gray-500 text-white"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            }`}
+          >
+            {s}
+          </button>
+        ))}
+      </div>
+
+      {/* 지역 선택 */}
       <div className="flex gap-2 mb-3">
         <select
           value={selectedCity}

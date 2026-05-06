@@ -133,7 +133,19 @@ const Detail = () => {
           {/* 오른쪽 정보 */}
         <div className="w-full md:w-1/2 flex flex-col justify-between">
           <div>
-            <h2 className="text-2xl font-bold mb-3">{product.title}</h2>
+            <div className="flex items-center gap-2 mb-3">
+              <h2 className="text-2xl font-bold">{product.title}</h2>
+              <span className={`text-sm px-3 py-1 rounded-full font-semibold ${
+                product.status === "판매중"
+                  ? "bg-blue-100 text-blue-600"
+                  : product.status === "예약중"
+                  ? "bg-yellow-100 text-white-600"
+                  : "bg-gray-200 text-gray-500"
+                }`}> 
+                  {product.status || "판매중"}
+              </span>
+            </div>
+            
             <p className="text-3xl font-bold text-blue-600 mb-3">
               {product.price.toLocaleString()}원
             </p>
@@ -146,7 +158,7 @@ const Detail = () => {
           {/* 버튼 영역 */}
           <div className="mt-8 flex flex-col gap-3">
 
-            {/* 판매 상태 변경(판매자만) */}
+            {/* 판매 상태 변경(판매자만)
             {isSeller && (
               <div className="flex gap-2">
                 {["판매중", "예약중", "판매완료"].map((s) => (
@@ -169,7 +181,7 @@ const Detail = () => {
                   </button>
                 ))}
               </div>
-            )}
+            )} */}
             
               {isSeller ? (
                 <div className="flex gap-3">

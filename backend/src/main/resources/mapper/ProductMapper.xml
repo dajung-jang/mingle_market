@@ -5,7 +5,14 @@
 <mapper namespace="com.example.mingle_market.mapper.ProductMapper">
 
     <select id="getAllProducts" resultType="ProductDto">
-        SELECT * FROM products ORDER BY created_at DESC
+        SELECT * FROM products 
+        ORDER BY created_at DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+<!-- 페이지네이션 -->
+    <select id="getTotalCount" resultType="int">
+        SELECT COUNT(*) FROM products
     </select>
 
     <select id="getProductById" resultType="ProductDto">

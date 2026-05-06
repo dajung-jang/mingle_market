@@ -3,11 +3,17 @@ import { productApi } from "../api/productApi";
 
 export const useProductStore = create ((set) => ({
   products: [],
+  totalPages: 1,
+  currentPage:1,
 
   // 전체 상품 불러오기
-  fetchProducts: async () => {
-    const res = await productApi.getAll();
-    set({ products: res.data });
+  fetchProducts: async (page = 1) => {
+    const res = await productApi.getAll(page);
+    set({
+      products: res.data.products,
+      totalPages: res.data.totalPages,
+      currentPage: res.data.currentPage,
+    });
   },
 
   // 상품 등록
@@ -24,34 +30,4 @@ export const useProductStore = create ((set) => ({
   deleteProduct: async (id) => {
     await productApi.delete(id);
   },
-
-  // // 상품 등록
-  // addProduct: (product) =>
-  //   set((state) => ({
-  //     products: [
-  //       ...state.products,
-  //       {
-  //         ...product,
-  //         id: Date.now(),
-  //       },
-  //     ],
-  //   })),
-
-  //   // 상품 삭제
-  //   deleteProduct: (id) =>
-  //     set((state) => ({
-  //       products: state.products.filter(
-  //         (item) => item.id !== id
-  //       ),
-  //     })),
-
-  //   // 상품 수정
-  //     updateProduct: (updateProduct) => 
-  //       set((state) => ({
-  //         products: state.products.map((item) =>
-  //           item.id === updateProduct.id
-  //             ? updateProduct
-  //             : item
-  //         ),
-  //       })),
 }));

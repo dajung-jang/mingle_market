@@ -34,4 +34,7 @@
     ORDER BY created_at DESC
   </select>
 
+  <!-- 안읽은 메세지 수 -->
+  
+
 </mapper>
