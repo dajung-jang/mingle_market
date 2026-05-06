@@ -4,6 +4,7 @@ import { useProductStore } from "../store/useProductStore";
 import { useUserStore } from "../store/useUserStore";
 import { supabase } from "../supabaseClient";
 import { regions } from "../data/regions";
+import { categories } from "../data/categories";
 
 const AddProduct = () => {
   const navigate = useNavigate();
@@ -15,11 +16,13 @@ const AddProduct = () => {
   const [description, setDescription] = useState("");
   const [imageFiles, setImageFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
+  const [category, setCategory] = useState("");
+  const [status, setStatus] = useState("판매중");
 
   // 지역 선택(유저 지역 기본값으로 설정)
   const [selectedCity, setSelectedCity] = useState(currentUser?.city || "");
   const [selectedDistrict, setSelectedDistrict] = useState(currentUser?.district || "");
-  const [selectedDong, setSelectedDong] = useState(currentUSer?.dong || "");
+  const [selectedDong, setSelectedDong] = useState(currentUser?.dong || "");
 
   const [uploading, setUploading] = useState(false);
 
@@ -78,6 +81,8 @@ const AddProduct = () => {
         imageUrls,
         sellerId: currentUser.id,
         description,
+        category,
+        status,
       });
 
       navigate("/");
@@ -161,6 +166,18 @@ const AddProduct = () => {
         rows={4}
         className="w-full border p-2 mb-3 rounded resize-none"
       />
+
+      {/* 카테고리 */}
+      <select
+        value={category}
+        onChange={(e) => setCategory(e.target.value)}
+        className="w-full border p-2 mb-3 rounded"
+      >
+        <option value="">카테고리 선택</option>
+        {categories.filter(c => c != "전체").map((c) => (
+          <option key={c} value={c}>{c}</option>
+        ))}
+      </select>
 
       {/* 지역 선택 */}
       <div className="flex gap-2 mb-3">

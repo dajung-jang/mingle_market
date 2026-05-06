@@ -13,13 +13,19 @@
     </select>
 
     <insert id="insertProduct" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO products (title, price, location, image, seller_id, description)
-        VALUES (#{title}, #{price}, #{location}, #{image}, #{sellerId}, #{description})
+        INSERT INTO products (title, price, location, image, seller_id, description, category, status)
+        VALUES (#{title}, #{price}, #{location}, #{image}, #{sellerId}, #{description}, #{category}, #{status})
     </insert>
 
     <update id="updateProduct">
         UPDATE products
-        SET title = #{title}, price = #{price}, location = #{location}, image = #{image}, description = #{description}
+        SET title = #{title}, 
+            price = #{price}, 
+            location = #{location}, 
+            image = #{image}, 
+            description = #{description},
+            category = #{category},
+            status = #{status}
         WHERE id = #{id}
     </update>
 

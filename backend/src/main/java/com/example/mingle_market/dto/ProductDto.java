@@ -15,4 +15,6 @@ public class ProductDto {
   private String sellerId;
   private String createdAt;
   private String description;
+  private String category;
+  private String status;
 }

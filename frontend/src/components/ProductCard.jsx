@@ -46,6 +46,22 @@ const ProductCard = ({ product }) => {
         </div>
         {/* 내용 */}
         <div className="p-3 text-left">
+          <div className="felx items-center gap-1 mb-1">
+            {product.category && (
+              <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                {product.category}
+              </span>
+            )}
+            {product.status && product.status !== "판매중" && (
+              <span className={`text-xs px-2 py-0.5 rounded-full ${
+                product.status === "예약중"
+                  ? "bg-yellow-100 text-yellow-600"
+                  : "bg-gray-200 text-gray-500"
+              }`}>
+                {product.status}
+              </span>
+            )}
+          </div>
           <h3 className="text-sm truncate font-semibold">
             {product.title}
           </h3>
