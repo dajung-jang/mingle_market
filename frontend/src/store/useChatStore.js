@@ -9,6 +9,7 @@ export const useChatStore = create((set, get) => ({
   chatRooms: [],
   messages: [],
   stompClient: null,
+  unreadCount: 0,
 
   // 채팅방 목록 불러오기
   fetchChatRooms: async (userId) => {
@@ -30,6 +31,20 @@ export const useChatStore = create((set, get) => ({
   fecthMessages: async (roomId) => {
     const res = await axios.get(`${BASE_URL}/chat/messages/${roomId}`);
     set({ messages: res.data });
+  },
+
+  // 안읽은 메세지 수 불러오기
+  fetchUnreadCount: async (userId) => {
+    const res = await axios.get(`${BASE_URL}/chat/unread/${userId}`);
+    set({ unreadCount: res.data });
+  },
+
+  // 메시지 읽음 처리
+  markAsRead: async (roomId, userId) => {
+    await axios.put(`${BASE_URL}/chat/read/${roomId}/${userId}`);
+    // 읽음 처리 후 unreadCount 갱신
+    const res = await axios.get(`${BASE_URL}/chat/unread/${userId}`);
+    set({ unreadCount: res.data });
   },
 
   // websocket 연결

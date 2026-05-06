@@ -45,4 +45,16 @@ public class ChatController {
     chatService.saveMessage(message);
     messagingTemplate.convertAndSend("/topic/chat/" + roomId, message);
   }
+
+  // 안읽은 메세지 수
+  @GetMapping("api/chat/unread/{userId}")
+  public int getUnreadCount(@PathVariable String userId) {
+    return chatService.getUnreadCount(userId);
+  }
+
+  // 메시지 읽음 처리
+  @PutMapping("/api/chat/read/{roomId}/{userId}")
+  public void markAsRead(@PathVariable Long roomId, @PathVariable String userId) {
+    chatService.markAsRead(roomId, userId);
+  }
 }

@@ -35,6 +35,20 @@
   </select>
 
   <!-- 안읽은 메세지 수 -->
-  
+  <select id="getUnreadCount" resultType="int">
+    SELECT COUNT(*) FROM messages m
+    JOIN chat_rooms cr ON m.room_id = cr.id
+    WHERE (cr.buyer_id = #{userId} OR cr.seller_id = #{userId})
+    AND m.sender_id != #{userId}
+    AND m.is_read = false
+  </select>
+
+  <!-- 메세지 읽음 처리 -->
+  <update id="markAsRead">
+    UPDATE messages
+    SET is_read = true
+    WHERE room_id = #{roomId}
+    AND sender_id != #{userId}
+  </update>
 
 </mapper>

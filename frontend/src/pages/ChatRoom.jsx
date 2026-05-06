@@ -14,6 +14,7 @@ const ChatRoom = () => {
     disconnect,
     sendMessage,
     getOrCreateRoom,
+    markAsRead
   } = useChatStore();
 
   // const roomId = `${productId}-${buyerId}-${sellerId}`;
@@ -35,6 +36,9 @@ const ChatRoom = () => {
       setRoomId(room.id);
       await fecthMessages(room.id);
       connect(room.id);
+
+      // 메세지 읽음 처리
+      if (currentUser) markAsRead(room.id, currentUser.id);
     };
     init();
 

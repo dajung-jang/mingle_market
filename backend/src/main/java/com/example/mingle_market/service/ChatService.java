@@ -38,4 +38,14 @@ public class ChatService {
   public List<ChatRoomDto> getChatRooms(String userId) {
     return chatMapper.getChatRooms(userId);
   }
+
+  // 안읽은 메시지 수
+  public int getUnreadCount(String userId) {
+    return chatMapper.getUnreadCount(userId);
+  } 
+
+  // 메시지 읽음 처리
+  public void markAsRead(Long roomId, String userId) {
+    chatMapper.markAsRead(roomId, userId);
+  }
 }
