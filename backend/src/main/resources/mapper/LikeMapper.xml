@@ -27,4 +27,8 @@
     WHERE l.user_id = #{userId}
     ORDER BY l.created_at DESC
   </select>
+
+  <select id="getLikesByProductId" resultType="LikeDto">
+    SELECT * FROM likes WHERE product_id = #{productId}
+  </select>
 </mapper>

@@ -5,10 +5,13 @@ import { useUserStore } from "../store/useUserStore";
 import { supabase } from "../supabaseClient";
 import { regions } from "../data/regions";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const BASE_URL = "http://localhost:8080/api";
 
 const MyPage = () => {
+  const navigate = useNavigate();
+
   const { likedItems, fetchLikes } = useLikeStore();
   const { currentUser, updateUser } = useUserStore();
   // 유저가 등록한 상품 필터링
@@ -23,6 +26,8 @@ const MyPage = () => {
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [selectedDong, setSelectedDong] = useState("");
   const [saving, setSaving] = useState(false);
+  // 상품 가격변동 알람
+  const [alerts, setAlerts] = useState([]);
 
   const profileInputRef = useRef(null);
 
@@ -35,12 +40,19 @@ const MyPage = () => {
     // 내 상품 불러오기
     axios.get(`${BASE_URL}/products`)
       .then((res) => {
-        const filtered = res.data.filter(
+        const filtered = res.data.products.filter(
           (item) => item.sellerId === currentUser.id
         );
         setMyProducts(filtered);
       });
 
+    // 알림 목록 불러오기
+    axios.get(`${BASE_URL}/alerts/${currentUser.id}`)
+      .then((res) => {
+        console.log(res.data); //데이터 확인용
+        setAlerts(res.data);
+      });
+    
     // 현재 유저 정보로 초기화
     setNickname(currentUser.nickname || "");
     setProfilePreview(currentUser.profileImage || null);
@@ -54,6 +66,12 @@ const MyPage = () => {
     if (!file) return;
     setProfileFile(file);
     setProfilePreview(URL.createObjectURL(file));
+  };
+
+  // 가격변동 알람 읽음처리
+  const handleMarkAllRead = async () => {
+    await axios.put(`${BASE_URL}/alerts/read-all/${currentUser.id}`);
+    setAlerts((prev) => prev.map((a) => ({ ...a, isRead: true })));
   };
 
   const handleSave = async () => {
@@ -163,15 +181,6 @@ const MyPage = () => {
             onChange={handleProfileChange}
             className="hidden"
           />
-          {/* {isEditing && (
-            <input
-              id="myProfileInput"
-              type="file"
-              accept="image/*"
-              onChange={handleProfileChange}
-              className="hidden"
-            />
-          )} */}
 
           {/* 유저 정보 */}
           <div className="flex-1">
@@ -239,6 +248,62 @@ const MyPage = () => {
           </div>
         </div>
       </div>
+
+      {/* 가격 변동 알림 */}
+      {alerts.length > 0 && (
+        <div className="bg-white rounded-2xl border p-6 mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold">🔔 가격 변동 알림</h2>
+            <button
+              onClick={handleMarkAllRead}
+              className="text-sm text-blue-500 hover:underline"
+            >
+              모두 읽음
+            </button>
+          </div>
+
+          <div className="flex flex-col gap-3">
+            {alerts.map((alert) => (
+              <div
+                key={alert.id}
+                onClick={async () => {
+                  await axios.put(`${BASE_URL}/alerts/read/${alert.id}`);
+                setAlerts((prev) =>
+                  prev.map((a) => a.id === alert.id ? { ...a, isRead:true} : a)
+                );
+                navigate(`/product/${alert.productId}`);
+                }}
+                className={`flex items-center gap-4 p-3 rounded-xl cursor-pointer ${
+                  alert.isRead ? "bg-gray-50" : "bg-blue-50"
+                }`}
+              >
+                <img
+                  src={alert.productImage || "https://placehold.co/48x48"}
+                  className="w-12 h-12 rounded-lg object-cover"
+                  onError={(e) => { e.target.src = "https://placehold.co/48x48"; }}
+                />
+                <div className="flex-1">
+                  <p className="font-semibold text-sm">{alert.productTitle}</p>
+                  <p className="text-sm text-gray-500">
+                    <span className="line-through text-gray-400">
+                      {alert.oldPrice?.toLocaleString()}원
+                    </span>
+                    {" → "}
+                    <span className={alert.newPrice < alert.oldPrice ? "text-red-500 font-bold" : "text-blue-500 font-bold"}>
+                      {alert.newPrice?.toLocaleString()}dnjs
+                    </span>
+                    {alert.newPrice < alert.oldPrice ? " 🔽 가격 인하" : " 🔼 가격 인상"}
+                  </p>
+                </div>
+                {!alert.isRead && (
+                  <span className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0" />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* 내 상품 */}
       <h2 className="text-xl font-bold mb-4">내 상품</h2>
       {myProducts.length === 0 ? (

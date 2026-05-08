@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mingle_market.mapper.PriceAlertMapper">
+  <insert id="insertAlert">
+    INSERT INTO price_alerts (user_id, product_id, old_price, new_price)
+    VALUES (#{userId}, #{productId}, #{oldPrice}, #{newPrice})
+  </insert>
+
+  <select id="getAlertsByUserId" resultType="PriceAlertDto">
+    SELECT pa.*, p.title as product_title, p.image as product_image
+    FROM price_alerts pa
+    JOIN products p ON pa.product_id = p.id
+    WHERE pa.user_id = #{userId}
+    ORDER BY pa.created_at DESC
+  </select>
+
+  <update id="markAlertAsRead">
+    UPDATE price_alerts SET is_read = true WHERE id= #{id}
+  </update>
+
+  <update id="markAllAlertsAsRead">
+    UPDATE price_alerts SET is_read = true WHERE user_id = #{userId}
+  </update>
+
+  <select id="getUnreadAlertCount" resultType="int">
+    SELECT COUNT(*) FROM price_alerts
+    WHERE user_id = #{userId} AND is_read = false
+  </select>
+</mapper>
