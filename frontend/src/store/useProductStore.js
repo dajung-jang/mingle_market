@@ -19,15 +19,36 @@ export const useProductStore = create ((set) => ({
   // 상품 등록
   addProduct: async (product) => {
     await productApi.add(product);
+    // 등록 후 목록 새로고침
+    const res = await productApi.getAll(1);
+    set({
+      products: res.data.products,
+      totalPages: res.data.totalPages,
+      currentPage: res.data.currentPage,
+    });
   },
 
   // 상품 수정
   updateProduct: async (id, product) => {
     await productApi.update(id, product);
+    // 수정 후 목록 새로고침
+    const res = await productApi.getAll(1);
+    set({
+      products: res.data.products,
+      totalPages: res.data.totalPages,
+      currentPage: res.data.currentPage,
+    });
   },
 
   // 상품 삭제
   deleteProduct: async (id) => {
     await productApi.delete(id);
+    // 삭제 후 목록 새로고침
+    const res = await productApi.getAll(1);
+    set({
+      products: res.data.products,
+      totalPages: res.data.totalPages,
+      currentPage: res.data.currentPage,
+    });
   },
 }));

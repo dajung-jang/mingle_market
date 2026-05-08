@@ -10,6 +10,7 @@ import AddProduct from './pages/AddProduct';
 import EditProduct from './pages/EditProduct';
 import Login from './pages/Login';
 import Header from './components/Header';
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
 
@@ -21,12 +22,12 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login/>} />
           <Route path="/product/:id" element={<Detail />} />
-          <Route path="/mypage" element={<MyPage />} />
+          <Route path="/mypage" element={<PrivateRoute><MyPage /></PrivateRoute>} />
           {/* <Route path='/write' element={<Write />} /> */}
-          <Route path="/chat" element={<ChatList />} /> 
-          <Route path="/chat/:productId/:buyerId/:sellerId" element={<ChatRoom />} />
-          <Route path="/add" element={<AddProduct />} />
-          <Route path="/edit/:id" element={<EditProduct />} />
+          <Route path="/chat" element={<PrivateRoute><ChatList /></PrivateRoute>} /> 
+          <Route path="/chat/:productId/:buyerId/:sellerId" element={<PrivateRoute><ChatRoom /></PrivateRoute>} />
+          <Route path="/add" element={<PrivateRoute><AddProduct /></PrivateRoute>} />
+          <Route path="/edit/:id" element={<PrivateRoute><EditProduct /></PrivateRoute>} />
         </Routes>
       </main>
     </BrowserRouter>

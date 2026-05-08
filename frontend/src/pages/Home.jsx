@@ -1,4 +1,5 @@
 import ProductCard from "../components/ProductCard";
+import Spinner from "../components/Spinner";
 import { useProductStore } from "../store/useProductStore";
 import { useLikeStore } from "../store/useLikeStore";
 import { useUserStore } from "../store/useUserStore";
@@ -6,6 +7,8 @@ import { useEffect, useState } from "react";
 import { categories } from "../data/categories";
 
 const Home = () => {
+
+  const [loading, setLoading] = useState(false);
 
   const { products, totalPages, currentPage, fetchProducts } = useProductStore();
   const { fetchLikes } = useLikeStore();
@@ -16,7 +19,8 @@ const Home = () => {
   const [selectedStatus, setSelectedStatus] = useState("전체");
 
   useEffect(() => {
-    fetchProducts(1);
+    setLoading(true);
+    fetchProducts(1).finally(() => setLoading(false));
     if (currentUser) fetchLikes(currentUser.id);
   }, [currentUser]);
 
@@ -88,7 +92,9 @@ const Home = () => {
         {search && ` - "${search}" 검색 결과`}
       </h3>
 
-      {filteredProducts.length === 0 ? (
+      {loading ? (
+        <Spinner />
+      ) : filteredProducts.length === 0 ? (
         <p className="text-gray-400 text-center mt-10">상품이 없습니다.</p>
       ) : (
         <div className="grid grid-cols-2 md:gird-cols-3 lg:grid-cols-4 gap-6">

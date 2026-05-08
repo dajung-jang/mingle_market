@@ -4,6 +4,7 @@ import { useLikeStore } from "../store/useLikeStore";
 import { useUserStore } from "../store/useUserStore";
 import { useProductStore } from "../store/useProductStore";
 import axios from "axios";
+import Spinner from "../components/Spinner";
 
 const BASE_URL = "http://localhost:8080/api";
 
@@ -31,7 +32,7 @@ const Detail = () => {
   }, [id]);
 
     // 상품 없을때
-  if (!product) return <div className="p-5">로딩중...</div>;
+  if (!product) return <Spinner />;
 
   // 판매자인지 구매자인지 확인
   const isSeller = currentUser?.id === product.sellerId;  
@@ -156,33 +157,7 @@ const Detail = () => {
           </div>
 
           {/* 버튼 영역 */}
-          <div className="mt-8 flex flex-col gap-3">
-
-            {/* 판매 상태 변경(판매자만)
-            {isSeller && (
-              <div className="flex gap-2">
-                {["판매중", "예약중", "판매완료"].map((s) => (
-                  <button
-                    key={s}
-                    onClick={async () => {
-                      await axios.put(`${BASE_URL}/products/${product.id}`, {
-                        ...product,
-                        status: s,
-                      });
-                      setProduct({ ...product, status: s });
-                    }}
-                    className={`flex-1 py-2 rounded-xl text-sm font-semibold ${
-                      product.status === s
-                        ? "bg-blue-500 text-white"
-                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                    }`}
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
-            )} */}
-            
+          <div className="mt-8 flex flex-col gap-3"> 
               {isSeller ? (
                 <div className="flex gap-3">
                   <button
