@@ -44,6 +44,10 @@ public class ChatService {
     return chatMapper.getUnreadCount(userId);
   } 
 
+  // 채팅방별 안읽은 메세지 수
+  public int getUnreadCountByRoom(Long roomId, String userId) {
+    return chatMapper.getUnreadCountByRoom(roomId, userId);
+  }
   // 메시지 읽음 처리
   public void markAsRead(Long roomId, String userId) {
     chatMapper.markAsRead(roomId, userId);

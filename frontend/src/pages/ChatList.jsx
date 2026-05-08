@@ -16,11 +16,7 @@ const ChatList = () => {
   const [tab, setTab] = useState("buy");
   const [productMap, setProductMap] = useState({});
   const [userMap, setUserMap] = useState({});
-  // 채팅방 리스트 테스트 더미
-  // const chats = [
-  //   {id: 1, user: "홍길동", lastMessage: "구매 가능할까요?" },
-  //   {id: 2, user: "아무개", lastMessage: "팔렸나요?" },
-  // ];
+  const [unreadMap, setUnreadMap] = useState({});
 
   useEffect(() => {
     if (currentUser) fetchChatRooms(currentUser.id);
@@ -42,6 +38,9 @@ const ChatList = () => {
         const res = await axios.get(`${BASE_URL}/users/${otherUserId}`);
         setUserMap((prev) => ({ ...prev, [otherUserId]: res.data }));
       }
+      // 안읽은 메세지 수
+      const res = await axios.get(`${BASE_URL}/chat/unread/${room.id}/${currentUser.id}`);
+      setUnreadMap((prev) => ({ ...prev, [room.id]: res.data }));
     });
   }, [chatRooms, tab]);
 
@@ -51,19 +50,6 @@ const ChatList = () => {
       ? room.buyerId === currentUser?.id
       : room.sellerId === currentUser?.id
   );
-
-  // // 채팅방 리스트 (필터링)
-  // const chatList = Object.entries(chatRooms).filter(
-  //   ([roomId]) => {
-  //     const [productId, buyerId, sellerId] = roomId.split("-");
-        
-  //     if (tab === "buy") {
-  //       return buyerId === currentUser.id;
-  //     } else {
-  //       return sellerId === currentUser.id;
-  //     }
-  //   }
-  // );
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -102,6 +88,8 @@ const ChatList = () => {
           const product = productMap[room.productId];
           const otherUserId = tab === "buy" ? room.sellerId : room.buyerId;
           const otherUser = userMap[otherUserId];
+          const unreadCount = unreadMap[room.id] || 0;
+
           return (
             <div
               key={room.id}
@@ -125,94 +113,18 @@ const ChatList = () => {
                   {tab === "buy" ? "판매자" : "구매자"}: {otherUser?.nickname || "로딩중..."}
                 </p>
               </div>
+
+              {/* 안읽은 메세지 수 */}
+              {unreadCount > 0 && (
+                <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0">
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
             </div>
           );
         })
       )}
     </div>
-//     <div className="p-5">
-//       <div className="flex flex-start">
-//         <button
-//         onClick={() => navigate(-1)}
-//         className="mb-4 text-2xl text-bold text-black mr-5 mb-2"
-//       >
-//         ←
-//       </button>
-//         <h2 className="text-xl font-bold mb-4">채팅</h2>
-//       </div>
-
-
-//       {/* 구매 판매 탭 */}
-//       <div className="flex mb-4">
-//         <button
-//           onClick={() => setTab("buy")}
-//           className={`flex-1 py-2 ${
-//             tab === "buy"
-//               ? "border-b-2 border-black font-bold"
-//               : "text-gray-400"
-//           }`}
-//         >
-//           구매
-//         </button>
-
-//         <button
-//           onClick={() => setTab("sell")}
-//           className={`flex-1 py-2 ${
-//             tab === "sell"
-//               ? "border-b-2 border-black font-bold"
-//               : "text-gray-400"
-//           }`}
-//         >
-//           판매
-//         </button>
-//       </div>
-
-//       {chatList.length === 0 ? (
-//         <p className="text-gray-400">
-//           채팅 내역이 없습니다.
-//         </p>
-//       ) : (
-//         chatList.map(([roomId, messages]) => {
-//           const lastMessage = messages[messages.length -1];
-            
-//           // roomId 분해
-//           const [productId, buyerId, sellerId] = roomId.split("-");
-
-//           // 채팅 시간
-//           const time = lastMessage?.createdAt
-//             ? new Date(
-//                 lastMessage?.createAt
-//               ).toLocaleTimeString([], { 
-//               hour: "2-digit", 
-//               minute:"2-digit" 
-//             })
-//           : "";
-
-//           return (
-//             <div
-//               key={roomId}
-//               onClick={() =>
-//                 navigate(`/chat/${productId}/${buyerId}/${sellerId}`)
-//               }
-//               className="p-4 border-b cursor-pointer hover:bg-gray-100"
-//             >
-//               <div className="flex justify-between">
-//                 <p className="font-semibold">
-//                   상품 {productId}
-//                 </p>
-//                 <span className="text-sm text-gray-400">
-//                   {time}
-//                 </span>
-//               </div> 
-
-//               <p className="text-gray-500 text-sm truncate">
-//                 {lastMessage?.text}
-//               </p>
-//             </div>
-//           );
-//         })
-//       )}
-//     </div>
   );
 };
 

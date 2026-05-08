@@ -22,6 +22,8 @@ public interface ChatMapper {
   List<ChatRoomDto> getChatRooms(String userId);
   // 안읽은 메시지 수
   int getUnreadCount(String userId);
+  // 채팅방 별 안읽은 메세지 수
+  int getUnreadCountByRoom(@Param("roomId") Long roomId, @Param("userId") String userId);
   // 메시지 읽음 처리
   void markAsRead(@Param("roomId") Long roomId, @Param("userId") String userId);
 }

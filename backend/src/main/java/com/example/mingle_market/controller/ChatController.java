@@ -52,6 +52,11 @@ public class ChatController {
     return chatService.getUnreadCount(userId);
   }
 
+  // 채팅방별 안읽은 메세지 수
+  @GetMapping("api/chat/unread/{roomId}/{userId}")
+  public int getUnreadCountByRoom(@PathVariable Long roomId, @PathVariable String userId) {
+    return chatService.getUnreadCountByRoom(roomId, userId);
+  }
   // 메시지 읽음 처리
   @PutMapping("/api/chat/read/{roomId}/{userId}")
   public void markAsRead(@PathVariable Long roomId, @PathVariable String userId) {
