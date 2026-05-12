@@ -14,10 +14,13 @@ const Home = () => {
   const { fetchLikes } = useLikeStore();
   const { currentUser } = useUserStore();
 
-  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState(""); // 입력값
+  const [search, setSearch] = useState(""); // 실제 검색어
   const [selectedCategory, setSelectedCategory] = useState("전체");
   const [selectedStatus, setSelectedStatus] = useState("전체");
 
+  const handleSearch = () => setSearch(searchInput);
+  
   useEffect(() => {
     setLoading(true);
     fetchProducts(1).finally(() => setLoading(false));
@@ -46,13 +49,20 @@ const Home = () => {
       </div>
 
       {/* 검색창 */}
-      <div className="mb-4">
+      <div className="flex gap-2 mb-4">
         <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           placeholder="상품명으로 검색해주세요"
           className="w-full border rounded-xl px-4 py-3 outline-none focus:border-blue-400"
         />
+        <button
+          onClick={handleSearch}
+          className="bg-blue-500 text-2xl text-white px-5 py-3 rounded-xl hover:bg-blue-600"
+        >
+          🔍
+        </button>
       </div>
 
       {/* 카테고리 필터 */}
