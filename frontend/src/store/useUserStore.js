@@ -87,6 +87,10 @@ export const useUserStore = create((set) => ({
   // 로그아웃
   signOut: async () => {
     await supabase.auth.signOut();
+    //로그아웃시 유저 지역 정보 초기화
+    localStorage.removeItem("regionInitialized");
+    localStorage.removeItem("selectedCity");
+    localStorage.removeItem("selectedDistrict"); 
     set({ currentUser: null });
   }, 
 }));

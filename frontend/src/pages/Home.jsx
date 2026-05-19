@@ -5,10 +5,15 @@ import { useLikeStore } from "../store/useLikeStore";
 import { useUserStore } from "../store/useUserStore";
 import { useEffect, useState } from "react";
 import { categories } from "../data/categories";
+import { regions } from "../data/regions";
 
 const Home = () => {
 
   const [loading, setLoading] = useState(false);
+  // 새로고침 시 지역구 재로딩 방지
+  const [initialized, setInitialized] = useState(() => {
+    return localStorage.getItem("regionInitialized") === "true";
+  });
 
   const { products, totalPages, currentPage, fetchProducts } = useProductStore();
   const { fetchLikes } = useLikeStore();
@@ -18,23 +23,50 @@ const Home = () => {
   const [search, setSearch] = useState(""); // 실제 검색어
   const [selectedCategory, setSelectedCategory] = useState("전체");
   const [selectedStatus, setSelectedStatus] = useState("전체");
-
-  const handleSearch = () => setSearch(searchInput);
+  // 지역별 검색
+  const [selectedCity, setSelectedCity] = useState(
+    localStorage.getItem("selectedCity") || ""
+  );
+  const [selectedDistrict, setSelectedDistrict] = useState(
+    localStorage.getItem("selectedDistrict") || ""
+  );
   
+  // 로그인 하면 본인 지역 자동 세팅
+  useEffect(() => {
+    if (currentUser?.userCity && !initialized) {
+      const city = currentUser.userCity;
+      const district = currentUser.userDistrict || "";
+      setSelectedCity(city);
+      setSelectedDistrict(district);
+      localStorage.setItem("selectedCity", city);
+      localStorage.setItem("selectedDistrict", district);
+      setInitialized(true);
+      localStorage.setItem("regionInitialized", "true");
+    }
+  }, [currentUser]);
+
   useEffect(() => {
     setLoading(true);
     fetchProducts(1).finally(() => setLoading(false));
     if (currentUser) fetchLikes(currentUser.id);
   }, [currentUser]);
 
+  const handleSearch = () => setSearch(searchInput);
+
+  const districts = selectedCity ? Object.keys(regions[selectedCity] || {}) : [];
+
   // 검색+카테고리+판매상태 필터
+  console.log(products[0]?.location);
   const filteredProducts = products.filter((item) => {
     const matchSearch = item.title.toLowerCase().includes(search.toLowerCase());
-    const matchCategory = 
-      selectedCategory === "전체" || item.category === selectedCategory;
-    const matchStatus =
-      selectedStatus === "전체" || item.status === selectedStatus;
-    return matchSearch && matchCategory && matchStatus;
+    const matchCategory = selectedCategory === "전체" || item.category === selectedCategory;
+    const matchStatus = selectedStatus === "전체" || item.status === selectedStatus;
+    //저장된 location 은 뒷글자 없이 '서울' 이런식으로 저장되기 때문에
+    const matchCity = !selectedCity || item.location?.includes(
+      selectedCity.replace("특별시", "").replace("광역시", "").replace("특별자치시", "").replace("특별자치도", "")
+    );
+    const matchDistrict = !selectedDistrict || item.location?.includes(selectedDistrict);
+    return matchSearch && matchCategory && matchStatus && matchCity && matchDistrict;
   });
 
   return (
@@ -48,15 +80,49 @@ const Home = () => {
         </p>
       </div>
 
-      {/* 검색창 */}
+      {/* 검색창, 지역선택 */}
       <div className="flex gap-2 mb-4">
         <input
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           placeholder="상품명으로 검색해주세요"
-          className="w-full border rounded-xl px-4 py-3 outline-none focus:border-blue-400"
+          className="flex-1 border rounded-xl px-4 py-3 outline-none focus:border-blue-400"
         />
+        {/* 시/도 선택 */}
+        <select
+          value={selectedCity}
+          onChange={(e) => {
+            setSelectedCity(e.target.value);
+            setSelectedDistrict("");
+            localStorage.setItem("selectedCity", e.target.value);
+            localStorage.setItem("selectedDistrict", "");
+          }}
+          className="border rounded-xl px-3 py-2 outline-none focus:border-blue-400 text-sm"
+        >
+          <option value="">전체 지역</option>
+          {Object.keys(regions).map((city) => (
+            <option key={city} value={city}>
+              {city.replace("특별시", "").replace("광역시", "").replace("특별자치시", "").replace("특별자치도", "").replace("도", "")}
+            </option>
+          ))}
+        </select>
+        {/* 구/군 선택 */}
+        {selectedCity && (
+          <select
+            value={selectedDistrict}
+            onChange={(e) => {
+              setSelectedDistrict(e.target.value);
+              localStorage.setItem("selectedDistrict", e.target.value);
+            }}
+            className="border rounded-xl px-3 py-2 outline-none focus:border-blue-400 text-sm"
+          >
+            <option value="">전체 구/군</option>
+            {districts.map((district) => (
+              <option key={district} value={district}>{district}</option>
+            ))}
+          </select>
+        )}
         <button
           onClick={handleSearch}
           className="bg-blue-500 text-2xl text-white px-5 py-3 rounded-xl hover:bg-blue-600"
@@ -82,7 +148,7 @@ const Home = () => {
             </button>
           ))}
         </div>
-        
+
         {/* 판매 상태 필터 */}
         <select
           value={selectedStatus}
@@ -98,8 +164,9 @@ const Home = () => {
 
       {/* 상품목록 */}
       <h3 className="text-lg font-bold mb-4">
-        {selectedCategory === "전체" ? "최근 등록된 상품" : selectedCategory}
-        {search && ` - "${search}" 검색 결과`}
+        {selectedCity ? `${selectedCity} ${selectedDistrict}` : "전체 지역"}
+        {selectedCategory !== "전체" && ` · ${selectedCategory}`}
+        {search && ` · "${search}" 검색 결과`}
       </h3>
 
       {loading ? (
